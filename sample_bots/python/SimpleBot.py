@@ -18,6 +18,8 @@ class SimpleBot:
         self.killer_ants = {}
         self.razer_ants = {}
 
+        self.has_food = {}
+
     def count_unpassable(self, ants, a_row, a_col, dest_row, dest_col):
         if a_row < dest_row:
             start_row = a_row
@@ -38,6 +40,7 @@ class SimpleBot:
             for j in range(start_col + 1, stop_col):
                 if ants.passable(i, j):
                     unpassable += 1
+        return unpassable
 
     def time_remaining(self, ants):
        return ants.turntime - int(1000 * (time.clock() - ants.turn_start_time))
@@ -47,18 +50,61 @@ class SimpleBot:
         new_straight = {}
         new_lefty = {}
         new_food = {}
-        new_killer = {}
+        new_hunter = {}
+        new_hill = {}
+        new_unseen = {}
         for a_row, a_col in ants.my_ants():
             if self.time_remaining(ants) < 50:
                 break
             # send new ants toward closest goal
             cur_ant = (a_row, a_col)
             if (not cur_ant in self.ants_straight and not cur_ant in self.ants_lefty and not cur_ant in self.food_ants):
-                closest_food = ants.closest_food(cur_ant[0], cur_ant[1])
-                if closest_food:
-                    direction = ants.direction(cur_ant[0], cur_ant[1], closest_food[0], closest_food[1])
+
+                closest_home = ants.closest_home(cur_ant[0], cur_ant[1])
+
+                if cur_ant in self.has_food and closest_home:
+                    # If ant has food, and there's a closest home, just go there
+                    direction = ants.direction(cur_ant[0], cur_ant[1],
+                                               closest_home[0], closest_home[1])
                     ants.issue_order((a_row, a_col, direction[0]))
-                    new_food[cur_ant] = direction[0]
+
+                closest_food = ants.closest_food(cur_ant[0], cur_ant[1])
+                closest_enemy_hill = ants.closest_enemy_hill(cur_ant[0], cur_ant[1])
+                closest_unseen = ants.closest_unseen(cur_ant[0], cur_ant[1])
+
+                distance_food = 9999999
+                if closest_food:
+                    distance_food = ants.distance(cur_ant[0], cur_ant[1], closest_food[0], closest_food[1])
+                    getLogger().debug("Found food at distance %s" % distance_food)
+
+                distance_hill = 9999999
+                if closest_enemy_hill:
+                    distance_hill = ants.distance(cur_ant[0], cur_ant[1], closest_enemy_hill[0], closest_enemy_hill[1])
+                    getLogger().debug("Found hill at distance %s" % distance_food)
+
+                distance_unseen = 9999999
+                if closest_unseen:
+                    distance_unseen = ants.distance(cur_ant[0], cur_ant[1], closest_unseen[0], closest_unseen[1])
+                    getLogger().debug("Found unseen at distance %s" % closest_unseen)
+
+                if closest_food or closest_enemy_hill or closest_unseen:
+                    minimum = min(distance_food, distance_hill, distance_unseen)
+
+                    if minimum == distance_food:
+                        getLogger().debug("Going toward food")
+                        direction = ants.direction(cur_ant[0], cur_ant[1], closest_food[0], closest_food[1])
+                        new_food[cur_ant] = direction[0]
+
+                    elif minimum == distance_hill:
+                        getLogger().debug("Going toward hill")
+                        direction = ants.direction(cur_ant[0], cur_ant[1], closest_enemy_hill[0], closest_enemy_hill[1])
+                        new_hill[cur_ant] = direction[0]
+
+                    elif minimum == distance_unseen:
+                        getLogger().debug("Going toward unseen")
+                        direction = ants.direction(cur_ant[0], cur_ant[1], closest_unseen[0], closest_unseen[1])
+                        new_unseen[cur_ant] = direction[0]
+                    ants.issue_order((a_row, a_col, direction[0]))
 
                 else:
                     if a_row % 2 == 0:
@@ -118,6 +164,7 @@ class SimpleBot:
         self.ants_straight = new_straight
         self.ants_lefty = new_lefty
         self.food_ants = new_food
+        self.razer_ants = new_hunter
 
 if __name__ == '__main__':
     try:
