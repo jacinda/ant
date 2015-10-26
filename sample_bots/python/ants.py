@@ -201,6 +201,18 @@ class Ants():
                 d.append('w')
         return d
 
+    def closest_home(self,row1,col1,filter=None):
+        #find the closest enemy hill from this row/col
+        min_dist=maxint
+        closest_hill = None
+        for hill in self.my_hills():
+            if filter is None or hill[0] not in filter:
+                dist = self.distance(row1,col1,hill[0][0],hill[0][1])
+                if dist<min_dist:
+                    min_dist = dist
+                    closest_hill = hill[0]
+        return closest_hill
+
     def closest_food(self,row1,col1,filter=None):
         #find the closest food from this row/col
         min_dist=maxint
