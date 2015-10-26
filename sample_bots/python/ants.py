@@ -2,6 +2,7 @@
 import sys
 import traceback
 import random
+import time
 
 try:
     from sys import maxint
@@ -50,6 +51,8 @@ class Ants():
         self.food_list = []
         self.dead_list = []
         self.hill_list = {}
+        self.turn_start_time = None
+        self.turntime = 0
 
     def setup(self, data):
         'parse initial input and setup starting game state'
@@ -79,6 +82,7 @@ class Ants():
 
     def update(self, data):
         # clear ant and food data
+        self.turn_start_time = time.time()
         for (row, col), owner in self.ant_list.items():
             self.map[row][col] = LAND
         self.ant_list = {}
@@ -119,6 +123,9 @@ class Ants():
                     elif tokens[0] == 'h':
                         owner = int(tokens[3])
                         self.hill_list[(row, col)] = owner
+
+    def time_remaining(self):
+        return self.turntime - int(1000 * (time.time() - self.turn_start_time))
 
     def issue_order(self, order):
         sys.stdout.write('o %s %s %s\n' % (order[0], order[1], order[2]))

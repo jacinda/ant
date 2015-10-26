@@ -3,6 +3,7 @@ from random import choice, randrange
 from ants import *
 import sys
 import logging
+import time
 from optparse import OptionParser
 
 class SimpleBot:
@@ -14,6 +15,9 @@ class SimpleBot:
         self.killer_ants = {}
         self.razer_ants = {}
 
+    def time_remaining(self, ants):
+       return ants.turntime - int(1000 * (time.clock() - ants.turn_start_time))
+
     def do_turn(self, ants):
         destinations = []
         new_straight = {}
@@ -21,22 +25,29 @@ class SimpleBot:
         new_food = {}
         new_killer = {}
         for a_row, a_col in ants.my_ants():
-            if ants.time_remaining() < 50:
+            if self.time_remaining(ants) < 50:
                 break
-            # send new ants in a straight line
-            if (not (a_row, a_col) in self.ants_straight and
-                    not (a_row, a_col) in self.ants_lefty):
-                if a_row % 2 == 0:
-                    if a_col % 2 == 0:
-                        direction = 'n'
-                    else:
-                        direction = 's'
+            # send new ants toward closest goal
+            cur_ant = (a_row, a_col)
+            if (not cur_ant in self.ants_straight and not cur_ant in self.ants_lefty and not cur_ant in self.food_ants):
+                closest_food = ants.closest_food(cur_ant[0], cur_ant[1])
+                if closest_food:
+                    direction = ants.direction(cur_ant[0], cur_ant[1], closest_food[0], closest_food[1])
+                    ants.issue_order((a_row, a_col, direction[0]))
+                    self.food_ants[cur_ant] = direction
+
                 else:
-                    if a_col % 2 == 0:
-                        direction = 'e'
+                    if a_row % 2 == 0:
+                        if a_col % 2 == 0:
+                            direction = 'n'
+                        else:
+                            direction = 's'
                     else:
-                        direction = 'w'
-                self.ants_straight[(a_row, a_col)] = direction
+                        if a_col % 2 == 0:
+                            direction = 'e'
+                        else:
+                            direction = 'w'
+                    self.ants_straight[(a_row, a_col)] = direction
 
             # send ants going in a straight line in the same direction
             if (a_row, a_col) in self.ants_straight:
