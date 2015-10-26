@@ -5,6 +5,7 @@ import logging
 import sys
 from optparse import OptionParser
 from logutils import initLogging,getLogger
+#logging.basicConfig(level=logging.DEBUG)
 
 turn_number = 0
 bot_version = 'v0.1'
