@@ -15,6 +15,27 @@ class SimpleBot:
         self.killer_ants = {}
         self.razer_ants = {}
 
+    def count_unpassable(self, ants, a_row, a_col, dest_row, dest_col):
+        if a_row < dest_row:
+            start_row = a_row
+            stop_row = dest_row
+        else:
+            start_row = dest_row
+            stop_row = a_row
+
+        if a_col < dest_col:
+            start_col = a_col
+            stop_col = dest_col
+        else:
+            start_col = dest_col
+            stop_col = a_col
+
+        unpassable = 0
+        for i in range(start_row + 1, stop_row):
+            for j in range(start_col + 1, stop_col):
+                if ants.passable(i, j):
+                    unpassable += 1
+
     def time_remaining(self, ants):
        return ants.turntime - int(1000 * (time.clock() - ants.turn_start_time))
 
