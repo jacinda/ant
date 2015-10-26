@@ -18,7 +18,11 @@ class SimpleBot:
         destinations = []
         new_straight = {}
         new_lefty = {}
+        new_food = {}
+        new_killer = {}
         for a_row, a_col in ants.my_ants():
+            if ants.time_remaining() < 50:
+                break
             # send new ants in a straight line
             if (not (a_row, a_col) in self.ants_straight and
                     not (a_row, a_col) in self.ants_lefty):
