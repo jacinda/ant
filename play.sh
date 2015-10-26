@@ -22,11 +22,5 @@ MAP=maps/maze/maze_p04_27.map
     "python sample_bots/python/HunterBot.py" \
     "python sample_bots/python/GreedyBot.py" \
     "python sample_bots/python/LeftyBot.py" \
-<<<<<<< HEAD
     "python mybots/BBot.py" |
 java -jar visualizer.jar
-=======
-    "python sample_bots/TimeoutBot.py"
-#java -jar visualizer.jar
->>>>>>> Add slideshow
-
