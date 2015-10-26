@@ -6,6 +6,9 @@ import logging
 import time
 from optparse import OptionParser
 
+from logutils import initLogging, getLogger
+logging.basicConfig(level=logging.DEBUG)
+
 class SimpleBot:
     def __init__(self):
         # Tuple of coordinates to direction ('n', 'e', 's', 'w')
@@ -55,7 +58,7 @@ class SimpleBot:
                 if closest_food:
                     direction = ants.direction(cur_ant[0], cur_ant[1], closest_food[0], closest_food[1])
                     ants.issue_order((a_row, a_col, direction[0]))
-                    self.food_ants[cur_ant] = direction
+                    new_food[cur_ant] = direction[0]
 
                 else:
                     if a_row % 2 == 0:
@@ -71,8 +74,11 @@ class SimpleBot:
                     self.ants_straight[(a_row, a_col)] = direction
 
             # send ants going in a straight line in the same direction
-            if (a_row, a_col) in self.ants_straight:
-                direction = self.ants_straight[(a_row, a_col)]
+            if (cur_ant in self.ants_straight) or (cur_ant in self.food_ants):
+                direction = self.ants_straight.get((a_row, a_col))
+                if not direction:
+                    direction = self.food_ants.get((a_row, a_col))
+                getLogger().debug("Direction is %s" % direction)
                 n_row, n_col = ants.destination(a_row, a_col, direction)
                 if ants.passable(n_row, n_col):
                     if (ants.unoccupied(n_row, n_col) and
@@ -111,6 +117,7 @@ class SimpleBot:
         # reset lists
         self.ants_straight = new_straight
         self.ants_lefty = new_lefty
+        self.food_ants = new_food
 
 if __name__ == '__main__':
     try:
