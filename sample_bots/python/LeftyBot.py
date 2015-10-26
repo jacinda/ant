@@ -7,6 +7,7 @@ from optparse import OptionParser
 
 class LeftyBot:
     def __init__(self):
+        # Tuple of coordinates to direction ('n', 'e', 's', 'w')
         self.ants_straight = {}
         self.ants_lefty = {}
 
@@ -82,4 +83,3 @@ if __name__ == '__main__':
         Ants.run(LeftyBot())
     except KeyboardInterrupt:
         print('ctrl-c, leaving ...')
-        
