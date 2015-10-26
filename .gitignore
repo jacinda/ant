@@ -58,3 +58,8 @@ target/
 
 # Game logs
 game_logs/
+
+# Intellij
+.idea/
+*.iml
+*.iws
