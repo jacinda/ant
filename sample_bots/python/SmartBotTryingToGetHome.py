@@ -120,7 +120,7 @@ class GreedyBot:
     #                 break
 
     def do_order(self, ants, order_type, loc, dest, destinations, hunted, orders):
-        order_type_desc = ["ant", "hill", "unseen", None, "food", "random", None]
+        order_type_desc = ["ant", "home", "hill", "unseen", None, "food", "random", None]
         a_row, a_col = loc
         getLogger().debug("chasing %s:start" % order_type_desc)
         directions = ants.direction(a_row,a_col,dest[0],dest[1])
