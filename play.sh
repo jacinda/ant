@@ -18,10 +18,10 @@ MAP=maps/maze/maze_p04_27.map
 
 
 # replace mybots/BBot.py with your own bot.
-./playgame.py --cutoff_turn 1000 --verbose -SEeR --player_seed 42 --end_wait=0.25 --verbose --log_dir game_logs --turns 1000 --map_file $MAP "$@" \
+./playgame.py --cutoff_turn 1000 --verbose -SoEeR --player_seed 42 --end_wait=0.25 --verbose --log_dir game_logs --turns 1000 --map_file $MAP "$@" \
     "python sample_bots/python/HunterBot.py" \
     "python sample_bots/python/GreedyBot.py" \
     "python sample_bots/python/LeftyBot.py" \
-    "python mybots/BBot.py"
-#java -jar visualizer.jar
+    "python mybots/BBot.py" |
+java -jar visualizer.jar
 
